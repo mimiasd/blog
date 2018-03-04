@@ -5,8 +5,8 @@ lastmod: 2018-03-04T18:06:56+08:00
 draft: false
 keywords: []
 description: "这篇文章主要介绍space-vim的安装"
-tags: [vim, editor]
-categories: [space-vim]
+tags: [space-vim, vim, editor]
+categories: [vim]
 author: "mimiasd"
 
 # You can also close(false) or open(true) something for this content.
