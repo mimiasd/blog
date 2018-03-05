@@ -257,5 +257,13 @@ cd ~/.vim/bundle/YouCompleteMe
 
 git submodule update --init --recursive 
 
-./install.py --all
+./install.py --clang-completer --go-completer --js-completer
 ```
+
+ 当安装完成后打开 vim，可能出现以下错误：
+
+> ImportError: libtinfo.so.5 no exsit
+
+ 解决方法是：
+
+> ln -s /lib64/libncurses.so.5 /lib64/libtinfo.so.5
