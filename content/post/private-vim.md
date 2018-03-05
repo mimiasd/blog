@@ -111,7 +111,7 @@ git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 
 ## nerd-commenter
 
- 安装 [nerd-commenter](https://github.com/scrooloose/nerdcommenter)：
+　　安装 [nerd-commenter](https://github.com/scrooloose/nerdcommenter)：
 
 ```
 1. Add Plugin 'scrooloose/nerdcommenter' to your vimrc file.
