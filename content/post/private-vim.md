@@ -24,19 +24,21 @@ mathjaxEnableSingleDollar: false
 
 # 概述
 
- 这是我个人的 vim 配置过程。
+　　这是我个人的 vim 配置过程。
+
+　　对于 vimscript，可以参考[使用脚本编写 Vim 编辑器](https://www.ibm.com/developerworks/cn/linux/l-vim-script-1/index.html?ca=drs-)和 [Vimscript 编程指南](https://www.gitbook.com/book/kenvifire/vimscript/details)。
 
 > 下面是各个插件的安装。
 
 ## Vundle
 
- 首先安装 vim 插件管理器 [Vundle](https://github.com/VundleVim/Vundle.vim)：
+　　首先安装 vim 插件管理器 [Vundle](https://github.com/VundleVim/Vundle.vim)：
 
 ```
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 ```
 
- 然后在 `.vimrc` 中添加下面的 Vundle 配置：
+　　然后在 `.vimrc` 中添加下面的 Vundle 配置：
 
 ```
 set nocompatible              " be iMproved, required
@@ -69,11 +71,43 @@ filetype plugin indent on    " required
 
 ## nerdtree
 
- 安装 [nerdtree](https://github.com/scrooloose/nerdtree)：
+　　安装 [nerdtree](https://github.com/scrooloose/nerdtree)：
 
 ```
 git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 ``` 
+
+### 简介
+ 
+　　nerdtree 是一个文件系统探测器。通过这个插件，用户可以形象地浏览复杂的文件层次结构，快速打开文件浏览或编辑，以及进行基础的文件系统操作。
+
+　　具体可以参考[Aaron 的 nerdtree 配置](http://aaronmoment.cn/nerdtree/)以及[如何优雅地使用 VIM 文件管理插件](https://linux.cn/article-7424-1.html)。
+
+### 常用操作
+
+- `<Ctrl-e>`：切换显示 NERDtree。
+
+- `<Ctrl-w>方向键`：切换窗口。
+
+- `<leader>e`：在 NERDtree 中找到当前文件的位置。
+
+- `:Bookmark [<name>]`：在当前目录或文件创建书签。
+
+- `:ClearBookmarks [<name>] 或 D`：删除相应书签。
+
+- `o 或 <Enter>`：打开文件、目录和书签。
+
+- `i`：竖屏分割打开一个新的文件窗口。
+
+- `s`：横屏分割打开一个新的文件窗口。
+
+- `P`：跳到根节点。
+
+- `m`：显示 NERD 树目录。
+
+- `I`：显示隐藏文件开关。
+
+- `B`：显示书签开关。
 
 ## nerd-commenter
 
