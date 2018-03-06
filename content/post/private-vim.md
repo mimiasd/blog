@@ -28,7 +28,7 @@ mathjaxEnableSingleDollar: false
 
 　　对于 vimscript，可以参考[使用脚本编写 Vim 编辑器](https://www.ibm.com/developerworks/cn/linux/l-vim-script-1/index.html?ca=drs-)和 [Vimscript 编程指南](https://www.gitbook.com/book/kenvifire/vimscript/details)。
 
-> 下面是各个插件的安装。
+# 安装的各类插件
 
 ## Vundle
 
@@ -109,6 +109,33 @@ git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 
 - `B`：显示书签开关。
 
+## nerdtree-git-plugin
+
+　　安装 [nerdtree-git-plugin](https://github.com/Xuyuanp/nerdtree-git-plugin)：
+
+```
+1. Add Plugin 'Xuyuanp/nerdtree-git-plugin' to your vimrc file.
+2. Reload your vimrc or restart
+3. Run :BundleInstall
+``` 
+
+　　这是一个开箱即用的插件， 显示的符号配置如下：
+
+```vimscript
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
+ ```
+
 ## nerd-commenter
 
 　　安装 [nerd-commenter](https://github.com/scrooloose/nerdcommenter)：
@@ -118,10 +145,204 @@ git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
 2. Reload your vimrc or restart
 3. Run :BundleInstall
 ```
+　　默认配置如下：
+
+```  
+<leader>cc   加注释
+<leader>cu   解开注释
+
+<leader>c<space>  加上/解开注释, 智能判断
+<leader>cy        先复制, 再注解(p可以进行黏贴)
+```
+
+　　最终配置：
+
+```
+Bundle 'scrooloose/nerdcommenter'
+
+" 注释的时候自动加个空格, 强迫症必配
+let g:NERDSpaceDelims = 1
+```
+
+## fzf
+
+　　安装 [fzf](https://github.com/junegunn/fzf.vim)来代替[ctrlp](https://github.com/ctrlpvim/ctrlp.vim)，以此实现与 shell 终端的通用，可以参考[fzf.vim 用法](https://blog.zfanw.com/fzf-vim-usage/)：
+
+```
+Bundle 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } 
+Bundle 'junegunn/fzf.vim'
+```
+
+　　进行如下按键映射：
+
+```
+nnoremap <silent> <C-p> :Files<CR>
+```
+
+### 常用操作
+
+- `Files [PATH]`：在 `PATH` 目录下进行查找，当前目录被映射成快捷键`<Ctrl-P>`。
+
+## ack
+
+　　安装 [ack.vim](https://github.com/mileszs/ack.vim)：
+
+```
+Bunlde 'mileszs/ack.vim'
+```
+
+　　进行如下按键映射：
+
+```
+map <leader>a :Ack<space>
+```
+
+### 常用操作
+
+- `:Ack [options] {pattern} [{directories}]`：在指定目录下进行查找匹配的行。
+
+## vim-surround
+
+　　安装 [vim-surround](https//github.com/tpope/vim-surround)：
+
+```
+git clone git://github.com/tpope/vim-surround.git ~/.vim/bundle
+```
+
+### 常用操作
+
+- `cs"'` 或 `cs"<q>`：意味着`change sourroundings " to '`，例如把：`"Hello world!"` 变为 `'Hello world!'` 或 `<q>Hello world!</q>`。
+
+- `cst"`： 意味着 `change sourroundings tag to "`，例如把 `<q>Hello world!</q>` 变为 `"Hello world!"`。
+
+- `ds"`：意味着 `delete sourroundings "`，例如把 `"Hello world!"` 变为 `Hello world!`。
+
+- `ysiw]`：意味着 `you surround in word ]`，例如把 `Hello world!` 变为 `[Hello] world!`。
+
+- `csw"`：意味着 `you surround word "`，例如把 `Hello world!` 变为 `"Hello" world!`。
+
+- `yss`：意味着 `you surround surroundings )`，例如把 `{Hello} world!` 变为 `({Hello} world!)`。
+
+## vim-repeat
+
+　　安装 [vim-repeat](https://github.com/tpope/vim-repeat)：
+
+```
+Bundle 'tpope/vim-repeat'
+```
+ 
+　　按 "." 键重复上次的操作。
+
+## vim-airline
+
+　　安装 [vim-airline](https://github.com/vim-airline/vim-airline)：
+
+```
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+```
+　　配置如下：
+
+```
+Bundle 'vim-airline/vim-airline'
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+let g:airline_left_sep = '▶'
+let g:airline_left_alt_sep = '❯'
+let g:airline_right_sep = '◀'
+let g:airline_right_alt_sep = '❮'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+
+" 是否打开tabline
+let g:airline#extensions#tabline#enabled = 1
+
+" 这个是安装字体后 必须设置此项"
+let g:airline_powerline_fonts = 1
+
+" 设置切换Buffer快捷键"
+ nnoremap <leader><left> :bp<CR>
+ nnoremap <leader><right> :bn<CR>
+```
+
+## ctags
+
+ 安装 [ctags](https://github.com/vim-scripts/ctags.vim)：
+
+```
+Plugin 'vim-scripts/ctags.vim'
+```
+
+## tagbar
+
+　　安装 [tagbar](https://github.com/majutsushi/tagbar)：
+
+```
+Plugin 'majutsushi/tagbar'
+```
+ 配置如下：
+
+```
+nmap tb :TagbarToggle<CR>
+
+" 启动时自动focus
+let g:tagbar_autofocus = 1
+
+" gotags 配置
+let g:tagbar_type_go = {
+    \ 'ctagstype': 'go',
+    \ 'kinds' : [
+        \'p:package',
+        \'f:function',
+        \'v:variables',
+        \'t:type',
+        \'c:const'
+    \]
+\}
+```
+
+## vim-easymotion
+
+　　安装 [vim-easymotion](https://github.com/easymotion/vim-easymotion)：
+
+```
+Plugin 'easymotion/vim-easymotion'
+```
+
+ 配置如下：
+
+```
+map <leader> <Plug>(easymotion-prefix)
+```
+
+## vim-colors-solarized
+
+ 安装 [vim-colors-solarized](https://github.com/altercation/vim-colors-solarized)：
+
+```
+Plugin 'altercation/vim-colors-solarized'
+
+cd vim-colors-solarized/colors
+mv solarized.vim ~/.vim/colors/
+```
+
+## rainbow
+
+ 安装 [rainbow](https://github.com/luochen1990/rainbow)：
+
+```
+Plugin "luochen1990/rainbow"
+```
+
+ 
+
 
 ## ultisnips
 
- 安装 [ultisnips](https://github.com/SirVer/ultisnips)：
+　　安装 [ultisnips](https://github.com/SirVer/ultisnips)：
 
 ```
 " Track the engine.
@@ -139,64 +360,11 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 ```
 
-## ctrlp
 
- 安装 [ctrlp](https://github.com/ctrlpvim/ctrlp.vim)：
 
-```
-1. Add Plugin 'ctrlpvim/ctrlp.vim' to your vimrc file.
-2. Reload your vimrc or restart
-3. Run :BundleInstall
-```
 
-## vim-surround
 
- 安装 [vim-surround](https//github.com/tpope/vim-surround)：
 
-```
-git clone git://github.com/tpope/vim-surround.git ~/.vim/bundle
-```
-
-## vim-airline
-
- 安装 [vim-airline](https://github.com/vim-airline/vim-airline)：
-
-```
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-```
-
-## ctags
-
- 安装 [ctags](https://github.com/vim-scripts/ctags.vim)：
-
-```
-Plugin 'vim-scripts/ctags.vim'
-```
-
-## tagbar
-
- 安装 [tagbar](https://github.com/majutsushi/tagbar)：
-
-```
-Plugin 'majutsushi/tagbar'
-```
-
-## vim-easymotion
-
- 安装 [vim-easymotion](https://github.com/easymotion/vim-easymotion)：
-
-```
-Plugin 'easymotion/vim-easymotion'
-```
-
-## vim-colors-solarized
-
- 安装 [vim-colors-solarized](https://github.com/altercation/vim-colors-solarized)：
-
-```
-Plugin 'altercation/vim-colors-solarized'
-```
 
 ## tabular
 
@@ -206,13 +374,6 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'godlygeek/tabular'
 ```
 
-## rainbow
-
- 安装 [rainbow](https://github.com/luochen1990/rainbow)：
-
-```
-Plugin "luochen1990/rainbow"
-```
 
 ## emmet-vim
 
@@ -267,3 +428,10 @@ git submodule update --init --recursive
  解决方法是：
 
 > ln -s /lib64/libncurses.so.5 /lib64/libtinfo.so.5
+
+# 常见问题
+
+1. 问题1：当修改 leader 键为空格键后，普通空格按键会有一定延迟。
+
+- 解决办法：[参考"vim let mapleader = “\<Space>” annoying cursor movement"](https://stackoverflow.com/questions/25341062/vim-let-mapleader-space-annoying-cursor-movement)。
+
