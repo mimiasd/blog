@@ -533,10 +533,33 @@ nnoremap <Leader>s :call ToggleErrors()<cr>
 
 ## vim-startify
 
- 安装 [vim-startify](https://github.com/mhinz/vim-startify)：
+　　安装 [vim-startify](https://github.com/mhinz/vim-startify)：
 
 ```
 Bundle 'mhinz/vim-startify'
+```
+
+## tabular
+
+　　安装 [tabular](https://github.com/godlygeek/tabular)：
+
+```
+Bundle 'godlygeek/tabular'
+```
+
+## vim-markdown
+
+　　安装 [vim-markdown](https://github.com/suan/vim-instant-markdown)：
+
+```
+Bundle 'plasticboy/vim-markdown'
+```
+
+  配置如下：
+
+```
+let g:vim_markdown_folding_disabled = 1
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 ```
 
 # 常见问题
