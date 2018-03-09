@@ -507,4 +507,351 @@ Host: server.example.com
 
 ### 4.1.2 授权响应
 
-　　如果
+　　如果资源拥有者许可了访问请求，那么授权服务器将发放一个授权码，并通过使用在重定向 URI 上加上 "application/x-www-form-urlencoded" 格式的参数，运送到客户端：
+
+- code
+  - 必须的。授权码被授权服务器产生。授权码必须在它被发放之后很快过期，来减缓泄露的风险。10 分钟的最大生命周期时间是推荐的。客户端不能使用授权码超过一次。如果授权码使用超过一次，授权服务器必须拒绝请求，并且应该撤销之前发放基于该授权码的所有令牌。授权码绑定到客户端识别符和重定向 URI。
+
+- state
+  - 必须的。如果 "state" 参数在授权请求中被提供。
+
+　　例如，授权服务器通过发送接下来的 HTTP 响应重定向用户代理：
+
+```
+HTTP/1.1 302 Found
+Location: https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA
+&state=xyz
+```
+
+　　客户端必须忽略不识别的响应参数。授权码的字符串大小没有在本说明书中被定义。客户端不应该假定授权码的大小。授权服务器应该文档化它发放的授权码大小。
+
+#### 4.1.2.1 错误响应
+
+　　如果请求失败是因为一个丢失，无效或不匹配的重定向 URI，或者客户端标识符的丢失或无效，那么授权服务器应该通知资源拥有者这个错误，不能自动地重定向用户代理到无效的重定向 URI。
+
+　　如果资源拥有者拒绝了访问请求或请求因为其他原因(丢失或无效的重定向 URI)，那么授权服务器应该通知客户端，通过在重定向 URI 上面添加 "application/x-www-form-urlencoded" 格式的请求参数。
+
+- error
+  - 必须的。一个单一的 ASCII 错误码，如下：
+    - invalid_request
+      - 请求丢失了一个必要的参数，包括一个无效的参数值，一个参数包括两遍，或参数畸变。
+    - unauthorized_client
+      - 客户端没有被许可来通过该授权码请求该方法。
+    - access_denied
+      - 资源拥有者或授权服务器拒绝了该请求。
+    - unsupported_response_type
+      - 授权服务器不支持该方法来获得一个授权码。
+    - invalid_scope
+      - 请求的范围是无效的，未知的或畸变的。
+    - server_error
+      - 授权服务器遭遇了一个意料之外情况，阻止了它满足请求。(这个错误是需要的，因为一个 500 服务器内部错误状态不能重定向返回给客户端)
+    - temporarily_unavailable
+      - 授权服务器当前不能处理请求，因为当前超载或服务器在维护。(这个错误码是需要的，因为一个 503 服务不可用状态码是不能重定向返回给客户端的)
+
+　　"error" 值不能包含范围 %x20-21 / %x23-5B / %x5D-7E 之外的字符。
+
+- error_description
+  - 可选的。可读的 ASCII 文本，提供额外的信息，用来帮助客户端开发者理解错误信息。
+
+- error_uri
+  - 可选的。URI 识别一个用户可读的网页，用来提供给用户额外的错误信息。
+
+- state
+  - 必须的。
+
+　　例如，授权服务器通过发送接下来的 HTTP 响应重定向用户代理：
+
+```
+HTTP/1.1 302 Found
+Location: https://client.example.com/cb?error=access_denied&state=xyz
+```
+
+### 4.1.3 访问令牌请求
+
+　　客户端向令牌终端发送一个请求，带有 "application/x-www-form-urlencoded" 类型参数的请求：
+
+- grant_type
+  - 必须的。该值必须被设为 "authorization_code"。
+
+- code
+  - 必须的。从授权服务器接收到的授权码。
+
+- redirect_uri
+  - 必须的。如果 "redirect_uri" 被包含到授权请求中，它们必须相同。
+
+- client_id
+  - 必须的。如果客户端没有被授权服务器认证。
+
+　　如果客户端类型是保密或客户端是被发放客户端证书(或者其他授权请求)，客户端必须获得授权服务器的身份鉴定。
+
+　　例如，客户端通过 TLS 发送以下 HTTP 的请求：
+
+```
+POST /token HTTP/1.1
+Host: server.example.com
+Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA
+&redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
+```
+
+　　授权服务器必须：
+
+- 需要客户端验证身份，对于保密的客户端或者其他任何被发放客户端证书的客户端。
+
+- 验证客户端，如果客户端身份鉴定被包含
+
+- 确保授权码被发放给验证了的保密服务器，或者如果客户端是公开的，确保授权码被发送给 "client_id"，在请求中。
+
+- 鉴别授权码的可用性，
+
+- 确保 "redirect_uri" 参数存在，如果 "redirect_uri" 参数被包含在初始的认证请求中，如果包含则确认两者相同。
+
+### 4.1.4 访问令牌响应
+
+　　如果访问令牌请求是有效和授权的，那么授权服务器发放一个访问令牌和可选的更新令牌。如果请求的客户端鉴定失败或无效，那么授权服务器应该返回一个错误。
+
+　　一个成功响应的例子：
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+"access_token":"2YotnFZFEjr1zCsicMWpAA",
+"token_type":"example",
+"expires_in":3600,
+"refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+"example_parameter":"example_value"
+}
+```
+
+## 简单许可
+
+　　简单许可类型用于获得访问令牌(不支持更新令牌的发放)和对用来操作一个特殊的重定向 URI 客户端的优化。这个客户端通常由脚本语言(如：javascript)实现在一个浏览器中。
+
+　　因为这是一个给予重定向的流程，所以客户端必须有能力与资源拥有者交互，有能力接收来自授权服务器的响应。
+
+　　与授权码许可类型不同，授权码中客户端独立的请求来获得验证和访问令牌，客户端接收一个访问令牌作为授权请求的响应。
+
+　　简单许可类型不包括客户端验证，依赖于资源拥有者和重定向 URI 的注册。因为访问令牌被编码进了重定向 URL，可能暴露给资源拥有者和其他在同样设备上的应用。
+
+```
++----------+
+| Resource |
+|  Owner   |
+|          |
++----------+
+  ^
+  |
+ (B)
++----|-----+          Client Identifier     +---------------+
+|         -+----(A)-- & Redirection URI --->|               |
+|  User-   |                                | Authorization |
+|  Agent  -|----(B)-- User authenticates -->|     Server    |
+|          |                                |               |
+|          |<---(C)--- Redirection URI ----<|               |
+|          |          with Access Token     +---------------+
+|          |            in Fragment
+|          |                                +---------------+
+|          |----(D)--- Redirection URI ---->|   Web-Hosted  |
+|          |          without Fragment      |     Client    |
+|          |                                |    Resource   |
+|     (F)  |<---(E)------- Script ---------<|               |
+|          |                                +---------------+
++-|--------+
+|    |
+(A)  (G) Access Token
+|    |
+^    v
++---------+
+|         |
+|  Client |
+|         |
++---------+
+                    Figure 4: Implicit Grant Flow
+```
+
+　　图 4 的步骤如下：
+
+- (A) 客户端通过把资源拥有者的用户代理重定向到授权终端。客户端包含它的客户端识别符，请求范围，本地状态，和将用来发送回用户代理访问许可的一个重定向 URI 。
+
+- (B) 授权服务器验证资源拥有者(通过用户代理)，建立资源拥有者是否许可或否认客户端的访问请求。
+
+- (C) 假设资源拥有者许可访问，那么授权服务器使用先前提供的重定向 URI 重定向用户代理到客户端。重定向 URI 在片段中包含访问令牌。
+
+- (D) 用户代理根据重定向的指示，重定向到网络的客户端资源(不包括片段)。用户代理在本地保留片段信息。
+
+- (E) 网络客户端资源返回一个网页(通常是一个带有内嵌脚本的 HTML 文档)，可以获得保留片段的整个重定向 URI，提取包含在片段中通的访问令牌。
+
+- (F) 用户代理在网络客户端资源本地执行脚本，获得访问令牌。
+
+- (G) 用户代理发送访问令牌给客户端。
+
+## 4.3 资源拥有者密码证书许可
+
+　　资源拥有者密码证书许可类型适合资源拥有者和客户端有一个可信的关系，例如设备的操作系统或则一个高优先级应用。当启用该许可类型时，授权服务器需要特别，并且只有在其他流程不可用时才使用这个。
+
+　　这个类型适合客户端有能力获得资源拥有者的证书(用户名，密码，通常使用一个交互的表单)。通常也用来迁移存在的客户端，使用直接的方式，例如基础 HTTP 或身份验证摘要，通过把存储的证书转化为访问令牌。
+
+```
++----------+
+| Resource |
+|  Owner   |
+|          |
++----------+
+  v
+  |    Resource Owner
+ (A) Password Credentials
+  |
+  v
++---------+                                  +---------------+
+|         |>--(B)---- Resource Owner ------->|               |
+|         |         Password Credentials     | Authorization |
+| Client  |                                  |     Server    |
+|         |<--(C)---- Access Token ---------<|               |
+|         |    (w/ Optional Refresh Token)   |               |
++---------+                                  +---------------+
+     Figure 5: Resource Owner Password Credentials Flow
+```
+
+　　图 5 的步骤如下：
+
+- (A) 资源拥有者提供给客户端它的用户名和密码。
+
+- (B) 客户端从授权服务器的令牌终端请求一个访问令牌，通过包含来自资源拥有者那接收到的证书。同事客户端请求授权服务器的验证。
+
+- (C) 授权服务器验证客户端，确认资源拥有者的证书，如果有效，则发放一个访问令牌。
+
+## 4.4 客户端证书许可
+
+　　客户端可以只用它的客户端证书去请求一个访问令牌(或者其他支持的验证方法)，当客户端去请求受保护资源时，或者这些其他资源拥有者已经提前安排了授权服务器。
+
+　　客户端证书许可类型必须只使用保密客户端。
+
+```
++---------+                                  +---------------+
+|         |                                  |               |
+|         |>--(A)- Client Authentication --->| Authorization |
+| Client  |                                  |     Server    |
+|         |<--(B)---- Access Token ---------<|               |
+|         |                                  |               |
++---------+                                  +---------------+
+           Figure 6: Client Credentials Flow
+```
+
+　　图 6 的流程如下：
+
+- (A) 客户端请求授权的验证身份，并且从令牌终端请求一个访问令牌。
+
+- (B) 授权服务器验证客户端，如果有效，则发放一个访问令牌。
+
+# 5 发放一个访问令牌
+
+　　如果访问令牌的请求是有效和授权的，那么授权服务器会发放一个访问令牌和可选的更新令牌。如果请求失败或无线，授权服务器将返回一个错误。
+
+## 5.1 成功的响应
+
+- access_token
+  - 必须的。
+
+- token_type
+  - 必须的。
+
+- expires_in
+  - 推荐的。
+
+- refresh_token
+  - 可选的。
+
+- scope
+  -可选的。
+
+　　参数被包含在 HTTP 响应的结构体里，使用 "application/json" 媒体类型。
+
+　　授权服务器必须包含 HTTTP 的 "Cache-Control" 响应头类型值为 "no-store"。 例如：
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+"access_token":"2YotnFZFEjr1zCsicMWpAA",
+"token_type":"example",
+"expires_in":3600,
+"refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
+"example_parameter":"example_value"
+}
+```
+
+## 5.2 错误的响应
+
+- error 
+  - invalid_request
+  - invalid_client
+  - invalid_grant
+  - unauthorized_client
+  - unsupported_grant_type 
+  - invalid_scope
+- error_description
+- error_uri
+
+　　例如：
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+"error":"invalid_request"
+}
+```
+
+# 6 更新一个访问令牌
+
+　　如果授权服务器发放了一个更新令牌给客户端，客户端将发送一个更新请求到令牌终端，通过添加一个使用 "application/x-www-form-urlencoded" 格式的参数。
+
+- grant_type
+  - 必须的。
+
+- refresh_token
+  - 必须的。
+
+- scope
+  - 可选的。
+
+　　因为更新令牌是通常长时间存在的，来获取额外的访问令牌，所以更新令牌是绑定到它发送的客户端的。如果客户端类型是保密的或客户端是被发放了客户端证书的，那么客户端必须验证于授权服务器。
+
+　　例如，客户端做了如下的 HTTP 请求，使用 TLS：
+
+```
+POST /token HTTP/1.1
+Host: server.example.com
+Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
+```
+
+　　授权服务器必须：
+
+- 需要客户端验证，对于保密客户端或者其他任何被发放客户端证书的客户端。
+
+- 鉴定客户端身份，如果客户端验证被包含，并且确保认证的客户端被发放更新令牌。
+
+- 确认更新令牌。
+
+　　授权服务器可能发放一个新的更新令牌，该情况下，客户端必须丢弃旧的更新令牌，用新的代替。并且更新令牌的范围必须与客户端请求的相同。
+
+# 7. 访问受限资源
+
+　　客户端访问受限资源，通过提供访问令牌给资源服务器。资源服务器必须验证访问令牌，确认没有过期，以及它的范围包含了请求的资源。
+
+　　客户端使用访问的令牌来验证于资源服务器的方法依赖于授权服务器发放访问令牌的类型。通常包含使用 HTTP "Authorization" 请求头域包含验证方案。
