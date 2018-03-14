@@ -3,9 +3,9 @@ title: "TodoList"
 date: 2018-03-13T17:56:13+08:00
 lastmod: 2018-03-13T17:56:13+08:00
 draft: false
-keywords: [todo]
+keywords: [go,todo]
 description: ""
-tags: [todo]
+tags: [go,todo]
 categories: [todo]
 author: "mimiasd"
 
