@@ -52,6 +52,10 @@ mathjaxEnableSingleDollar: false
 
 - [Wiki](https://github.com/golang/go/wiki)
 
+## Golang Books 
+
+- [Learning go](https://miek.nl/go/)
+
 # Advanced Golang
 
 ## Go's Assembler
@@ -69,3 +73,11 @@ mathjaxEnableSingleDollar: false
   - SP: Stack pointer: top of stack.
 
 ### [Chapter I: A Primer on Go Assembly](https://github.com/teh-cmc/go-internals/tree/master/chapter1_assembly_primer)
+
+# Golang Packages 
+
+## unsafe
+
+- [Package unsafe](https://golang.org/pkg/unsafe/)
+
+- [The-Golang-Standard-Library-by-Example: unsafe](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example/blob/master/chapter15/15.02.md)

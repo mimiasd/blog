@@ -35,3 +35,26 @@ mathjaxEnableSingleDollar: false
 　　当编译包时， build 忽略那些 "_test.go" 结尾的文件。
 
 　　'-o' 参数只允许编译单个包，强制 build 把结果可执行文件或对象命名为该命名的输出文件，而不是默认的行为。
+
+　　'-i' 参数安装目标依赖的包。
+
+　　下面的 build 参数被 build、clean、get、install、list、run 和 test 命令共享：
+
+```
+-a 
+      强制重新构建已经最新的包。
+-n
+      打印命令，但不运行它们。
+-p n 
+      可以被同时运行的程序的数量，例如构建命令、测试二进制文件。默认是 CPUs 的可用数量。
+-race
+      开启数据竞争探测。只支持 linux/amd64, freebsd/amd64, darwin/amd64 and windows/amd64.
+-msan
+      开启内存检测交互。只支持 linux/amd64，且 Clang/LLVM 为其本机的 C 编译器。
+-v
+      打印被编译的包名。
+-work
+      打印暂时的工作目录名，当存在时不删除它。
+-x
+      打印命令。
+```
