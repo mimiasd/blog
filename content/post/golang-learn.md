@@ -81,3 +81,9 @@ mathjaxEnableSingleDollar: false
 - [Package unsafe](https://golang.org/pkg/unsafe/)
 
 - [The-Golang-Standard-Library-by-Example: unsafe](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example/blob/master/chapter15/15.02.md)
+
+- [unsafe.Pointer && uintptr](https://my.oschina.net/xinxingegeya/blog/729673)
+
+## builtin
+
+- [Package builtin](https://golang.org/pkg/builtin/)
